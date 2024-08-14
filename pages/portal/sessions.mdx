@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { Callout } from 'nextra/components'
 
 # Sessions
 
@@ -31,12 +32,24 @@ The session details page provides you with a detailed view of the session data a
 
 ### Session context
 
-TODO
+The session context provides you with all the information required to evaluate and analyse a session. A session can have multiple `Completions` which are the results of the LLM model. The session context also aggregates the token counts for prompt, completion and the total token count. 
+
+For each completion, the required context is presented:
+* **Generated Result**: The generated output of the LLM model. The rendering support multiple formats like Text, JSON, and  HTML to render the output in a way that it can be analyzed easily. This requires a configuration of the SDK to capture the content type.
+* **Model Infos**: An aggregation of the model information like the model name, model type, and the model version that was used to generate the completion. This also includes performance metrics like the response time of the model.
+* **Prompts**: The prompt contains the list of messages provided to the LLM model, with all the context.
+* **InputContext**: The input context is optional and can contain additional information about the input data. This can e.g. be the individual fragment for a Retrievel Augmented Generation (RAG) architecture. While this data is also part of the prompt, the input context provides you with a structured view of the input data that was used to generate the completion and additional metadata like retrieval scores, etcs.
+
+
+<Callout type="info" emoji="ℹ️">
+  The InputContext feature will be launched soon and will provide you with the context of the input data that was used to generate the completion for deeper analysis.
+</Callout>
 
 
 ### Working with Sessions
 
 The session page provides you with a set of actions to work with the sessions to make sure that your team documents findings easily and shares them with the rest of the team to identify potential for improving the reliability of your applications.
+
 
 <Image className="my-8" src="/images/screens/19_zenetics_portal_session_actions.png" alt="Zenetics Portal" width="400" height="400" />
 
@@ -44,4 +57,54 @@ The Session Action menu provides you with the following options:
 * Evaluate Session: Evaluate the session using a structured form to provide feedback high-quality feedback to the team.
 * Flag Session: Flag the session to highlight it for the rest of the team. This is important when you want to make sure that the session is reviewed by the team.
 * Set Session State: Change the state of the session to reflect the current status of the session (e.g. "Open", "In Progress", "Completed"). This helps you to keep track of the progress of the session and make the progress transparent to the rest of the team.
-TODO
+
+
+#### Reporting Text Sections
+
+For some content types, users can provide feedback on individual sections of text to provide detailed comments on how to improve the generated output. This is especially useful when the generated output is long and the user wants to provide feedback on specific sections of the text.
+
+<Image className="my-8" src="/images/screens/16_zenetics_portal_session_details_text_mark_dialog_details.png" alt="Zenetics Portal" width="400" height="400" />
+
+#### Evaluating Sessions
+
+Evaluation provide your users to give structured feedback on the generated output. The evaluations are rendered as a form that can be customized to fit the requirements of your application. The evaluation form can include multiple sections with different types of questions to make sure that the feedback is structured and can be used to improve the quality of the generated content.
+
+In addition, a comment can document additional insights of the users. 
+
+<Image className="my-8" src="/images/screens/14_zenetics_portal_session_details_expert_evaluation.png" alt="Zenetics Portal" width="1200" height="400" />
+
+Evaluations are a very powerful mechanism for getting high-quality feedback to improve the quality of the generated content and to improve the automated evaluation capabilities on your content. See more information in the section [Evaluations & Flags](/portal/evaluations-flags).
+
+#### Flagging Sessions
+
+When noticing someing that is not correct or that needs to be reviewed by the team, you can flag the session to highlight it for the rest of the team. This is important when you want to make sure that the session is reviewed by the team. You can filter sessions on the session list by the flag to make sure that you can easily locate the sessions that need to be reviewed.
+
+<Image className="my-8" src="/images/screens/13_zenetics_portal_session_details_flag_session.png" alt="Zenetics Portal" width="400" height="400" />
+
+Users can add optional comments to the flag and select from a set of labels that are defined on the application level to provide additional context to the team.
+
+
+#### Managing Session State
+
+You can set a state for each individual session to keep your team informed about the progress of the session. The state can be set to the following values:
+* Open
+* In Progress
+* Completed
+
+## Activities & Comments
+
+Developing non-trivial LLM applications requires a lot of communication between the team members to make sure that content that does not meet expectations is detected and that improvements are applied to the LLM model and the input data. Zenetics was designed with collaboration at its core to include all necessary stakeholder into the process and make sure that the team can work together to improve the reliability of the LLM applications.
+
+<Image className="my-8" src="/images/screens/17_zenetics_portal_session_details_activities.png" alt="Zenetics Portal" width="1200" height="400" />
+
+The section Activities below the session context provides you will all the activities that have been performed on the session. This includes the evaluation of the session, the flagging of the session, and the changes of the session state. In addition, it also includes the comments that have been added to the session to document findings and to provide feedback to the team.
+
+Activities are displayed in a chronological order to make sure that you can follow the progress of the session and the feedback that has been provided by the team members. The activities include the following information:
+* Flags
+* Evaluations
+* Reported Text Sections
+* State Changes
+
+<Callout type="info" emoji="ℹ️">
+  The integration with collaboration platforms like **Slack** and **Microsoft Teams** will be launched soon to make sure that all team members can stay up-to-date with the latest activities and comments on the sessions. This also includes an optional **Email Notification** feature to make sure that you are informed about the latest activities on the sessions.
+</Callout>

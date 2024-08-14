@@ -20,11 +20,15 @@ The project requires the package manager [pnpm](https://pnpm.io/) to be installe
 
 First, run `pnpm i` to install the dependencies. 
 
-Then, run `pnpm dev` to start the development server and visit localhost:3000.
+Run `make run` to to start the development server and visit localhost:3000.
+Run `make build` to create a local build and check for build errors.
+
 
 ## Deployment
 
-TODO
+The application is intended to be run as a docker container on Google Cloud Run: zenetics-docs. The application is build via CloudBuild Tiggers when an update is push to the `main`-branch.
+
+The CloudRun service `zenetics-docs` is set up in Terraform as a separate module.
 
 ## Managing Content
 
