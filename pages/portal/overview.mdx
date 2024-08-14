@@ -1,3 +1,62 @@
-# Zenetics Portal Overview
+import Image from 'next/image'
+import { Callout } from 'nextra/components'
 
-TODO
+import Notice from '@/components/common/Notice'
+
+# Overview of the Zenetics Portal
+
+Developing and operating LLM applications is complex and requires the collaboration of engineering teams and domain experts. The Zenetics Portal is a scalable application that allows your team to collaboratively build and optimize reliable LLM applications. It provides access to the session data captured by the LLM and provides intuitive features to evaluate, analyze, and improve the generated output.
+
+<Image className="my-8" src="/images/screens/01_zenetics_portal_dashboard.png" alt="Zenetics Portal" width="1200" height="400" />
+
+## Key Concepts to get your started
+
+This section gives you an overview of the key concepts and features of the Zenetics Portal. 
+
+#### Environments
+
+Zenetics is build to support your GenAI application from idea to production. Therefore, you can create environments to align with the development concept you use for your application and keep your data strictly separated.
+
+By default, your Zenetics account comes with the following environments:
+* **Development** (dev): The development environment is the default environment for your account. It is used to develop and test your applications.
+* **Test** (test): The test environment can be used to test your applications.
+* **Production** (prod): The production environment is used to run your applications in production.
+
+The available environments are displayed in the top right corner of the Zenetics Portal. You can switch between environments by selecting the environment from the dropdown menu.
+
+<Image className="my-8" src="/images/screens/02_zenetics_portal_environment_selection.png" alt="Zenetics Portal" width="400" height="400" />
+
+
+You can modify the environments to fit your development process and create new environments as needed. This includes creating new environments, renaming environments, and deleting environments.
+
+<Callout type="info" emoji="ℹ️">
+  Managing environments is limited in the free pilot phase and you can request changes to the enviroment of your account by reaching out to our support team.
+</Callout>
+
+
+#### Applications
+
+Applications represent your individual use cases that you want to build and optimize with Zenetics. You can create multiple applications in your account for a given environment. This ensures that your data is strictly separated and that you can manage your applications independently.
+
+For example, a company in the area of customer service might create multiple applications to cover differnt use cases in their product:
+* Automatic Answer Generation
+* Automatic Help Center Article Generation and Updates
+* Support Case Summarization
+* Sentiment Analysis
+
+You find more details about managing your applications in the [Applications](/portal/applications) section.
+
+<Callout type="info" emoji="ℹ️">
+  Managing applications is limited in the free pilot phase and you can request changes to the applications of your account by reaching out to our support team. The feature for adding, deleting and modifiying application will be available soon.
+</Callout>
+
+#### Sessions
+
+Sessions represent the data captured by the LLM for a given application. They provide you with all the relevant context to evaluate, analyze, and improve the generated output. You can view the session data in the Zenetics Portal and use the features to evaluate the generated output.
+
+A session is the captured inputs and outputs of one or multiple calls to your selected LLM model and are automatically capured by the [Zenetics SDK](/sdk). An example is a multi-stage processing chain that includes steps to retrieve data and then generate content. 
+
+You can define and control the duration and scope of your session using the SDK. 
+
+You find more details about working with Sessions in the [Sessions](/portal/sessions) section.
+
