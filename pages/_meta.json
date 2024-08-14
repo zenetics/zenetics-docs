@@ -1,15 +1,18 @@
 {
-  "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
-  "about": {
-    "title": "About",
-    "type": "page"
-  },
-  "contact": {
-    "title": "Contact ↗",
-    "type": "page",
-    "href": "https://twitter.com/shuding_",
-    "newWindow": true
-  }
+    "index": "Overview",
+    "portal": "Zentics Portal",
+    "sdk": "Zenetics SDK",
+    "about": "About Zenetics",
+    "gethelp": {
+        "title": "Get Help ↗",
+        "type": "page",
+        "href": "https://zenetics.io",
+        "newWindow": true
+    },
+    "signin": {
+        "title": "Sign In ↗",
+        "type": "page",
+        "href": "https://zenetics.io",
+        "newWindow": true
+    }
 }
