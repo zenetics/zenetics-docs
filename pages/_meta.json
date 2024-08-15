@@ -1,7 +1,8 @@
 {
-    "index": "Overview",
+    "index": "Welcome to Zenetics",
     "portal": "Zentics Portal",
     "sdk": "Zenetics SDK",
+    "quickstart": "Quickstart",
     "about": "About Zenetics",
     "gethelp": {
         "title": "Get Help ↗",

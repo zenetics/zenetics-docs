@@ -20,7 +20,14 @@ const config: DocsThemeConfig = {
         link: 'https://discord.com',
     },
     footer: {
-        text: 'ZENETICS - The GenAI Development Platform',
+        text: (
+            <span>
+                <a href='https://www.zenetics.io' target='_blank'>
+                    ZENETICS - Build Reliable GenAI Applications.
+                </a>
+                .
+            </span>
+        ),
     },
     feedback: {
         content: <></>,

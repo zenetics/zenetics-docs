@@ -1,0 +1,91 @@
+import Image from 'next/image'
+import { Callout } from 'nextra/components'
+
+# Session Evaluation & Flags
+
+The current version provide 2 main mechanisms to provide feedback on the generated content:
+* **Flags**: marking sessions that need to be reviewed by the team
+* **Evaluations**: providing structured feedback on the generated content
+
+This page gets you up to speed with the concept and the usage of both evaluations and flags, to make sure that you can provide high-quality feedback to the team and improve the reliability of the generated content.
+
+## Flags
+
+### Introduction to Flags
+
+Session Flags are an essential mechanism to provide feedback on the generated content to the team. Flags are used to highlight sessions that need to be reviewed by the team to make sure that the generated content meets the requirements of the application. 
+
+Zenetics allows users to flag sessions easily and to provide additional context to make sure that the team responsible for the quality of the generated content receives all necessary information to make an informed decision on how to improve the generated content. This includes a set of predefined labels that can be used to provide additional context to the team, and a comment field to document additional insights.
+
+You can configure notifications via email or collaboration platforms like Slack or Microsoft Teams to make sure that the team is informed about a newly flagged session and can take action to improve the generated content.
+
+<Callout type="info" emoji="ℹ️">
+  The integration with collaboration platforms like **Slack** and **Microsoft Teams** will be launched soon to make sure that all team members can stay up-to-date with the latest activities and comments on the sessions. This also includes an optional **Email Notification** feature to make sure that you are informed about the latest activities on the sessions.
+</Callout>
+
+
+### Using Flags in Zenetics
+
+Flags are available from the action menu on the Session Details page.
+
+<Image className="my-8" src="/images/screens/13_zenetics_portal_session_details_flag_session.png" alt="Zenetics Portal" width="400" height="400" />
+
+In addition, the flag feature is also available via the Zenetics API, which allows customers to integrate the flagging feature into their applications to make sure that the users of the application can provide feedback on the generated content directly from the application.
+
+### Configuring Labels
+
+Zenetics allows you to configure a set of labels that can be used to provide additional context to the team when flagging a session. The labels can be configured on the application level to make sure that the labels are consistent across all sessions and that the team can easily filter sessions based on the labels to make sure that the sessions that need to be reviewed are easily accessible.
+
+<Image className="my-8" src="/images/screens/23_zenetics_portal_applications_labels_details.png" alt="Zenetics Portal" width="1200" height="400" />
+
+<Callout type="info" emoji="ℹ️">
+    The configuration of Labels will be available during the Pilot phase. If you are interested in using the Labels feature, please reach out to our support team to configure the required labels for your application.
+</Callout>
+
+## Evaluations
+
+### Introduction to Evaluations
+
+Evaluations are a powerful feature to engage with your domain experts to provide structured, high-quality feedback on the generated content. Evaluations are rendered as a form that can be customized to fit the requirements of your application. The evaluation form can include multiple sections with different types of questions to make sure that the feedback is structured and can be used to improve the quality of the generated content.
+
+GenAI applications are very diverse and one size does not fit all in this case. Therefore, Zenetics lets you define custom evaluation templates that can be assigned to applications to make sure that the evaluation form fits the requirements of the application via the Zenetics Portal.
+
+You can configure the evaluation form using the Zenetics Portal to define a **Evaluation Template** that will be assigned to a given application. This template can include multiple sections to capture the relevant information, while providing users the option to give additional feedback via a text comment field.
+
+<Image className="my-8" src="/images/screens/14_zenetics_portal_session_details_expert_evaluation.png" alt="Zenetics Portal" width="1200" height="400" />
+
+### Using Evaluations in Zenetics
+
+Evaluations are available from the action menu on the Session Details page. Clicking the Evaluate button will open a sidebar with the evaluation form that can be filled out by the user. By default, all secctions included in the evaluation template are required, i.e. that users need to provide feedback on all sections to submit the evaluation.
+
+<Image className="my-8" src="/images/screens/19_zenetics_portal_session_actions.png" alt="Zenetics Portal" width="400" height="400" />
+
+In addition, the evaluation feature is also available via the Zenetics API, which allows customers to integrate the evaluation feature into their applications to make sure that the users of the application can provide feedback on the generated content directly from the application.
+
+### Configuring Evaluations
+
+Evaluation Templates provide the flexibility to define custom evaluation forms that can be assigned to applications to make sure that the evaluation form fits the requirements of the application. The configuration is part of the application configuration and can be access via the header menu in the Zenetics Portal: `Applications`.
+
+The Evaluation Template Configurator currently support the following types of questions:
+* **Single Choice**: users can select one option from a list of predefined options
+* **Multiple Choice**: users can select multiple options from a list of predefined options
+* **Rating**: users can rate a given aspect of the generated content on a scale from 1 to 5
+* **Binary**: users can select between two options (e.g. Yes/No)
+
+<Callout type="info" emoji="ℹ️">
+    The configuration of Evaluation Templates for applications will be released soon. If you are interested in using the Evaluation feature, please reach out to our support team to configure the required Evaluation Template for your application.
+</Callout>
+
+
+## Roadmap
+
+This version represents only the beginning for Zenetics and we are already working on the next generation of features for evaluating generated content at scale to make sure that your team receives the necessary feedback to identify potential for improving the reliability of your applications.
+
+Our roadmap includes the following features:
+- [ ] **Custom Evaluation Templates**: extend the configuration capabilities to provide application-specific evaluation templates.
+- [ ] **Customer Evaluations**: enable end users to provide reach feedback on the generated content.
+- [ ] **Automated Flagging**: Integrate automated content inspection and evaluation to automatically flag content based on the evaluation feedback gained from human domain experts.
+- [ ] **Evaluation Reports**: Evaluate the quality of the generated content based on the evaluation feedback to provide insights on the quality of the generated content.
+- [ ] **Evaluation Insights**: Automatically extract recommendations for improving the generated content based on the evaluation feedback.
+
+Please reach out to our support team to learn more about our product roadmap and to provide feedback on the current version of Zenetics to make sure that we can improve the product to fit your requirements.

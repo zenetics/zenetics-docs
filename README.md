@@ -34,13 +34,20 @@ The CloudRun service `zenetics-docs` is set up in Terraform as a separate module
 
 The [Nextra documentation](https://nextra.site/docs/docs-theme/page-configuration) provides a short overview on how to add new pages and manage the navigation menues.
 
-### General
-
-TODO
 
 ### Adding New Pages
 
-TODO
+To add a new page, create a new mdx-file in under the `pages`-folder or one of its subfolders. The page will automatically be shown in the sidebar navigation. To control the sort order of the sidebar navigation and to add a custom title, the page shall be added to the `_meta.json`-file in the respective folder where the page is placed.
+
+For more information, see the Netra Documention: [Organizing Files](https://nextra.site/docs/guide/organize-files)
+
+### Adding Images
+
+Images can be added in the `/public` folder. 
+
+Nextra support the NextJS Image component that automatically optimizes the images served to the client: [NEXT - Image Optimization](https://nextjs.org/docs/pages/building-your-application/optimizing/images).
+
+Use the `<Image>`compnent instead of the standard image-tag to provide a better UX.
 
 ### Specific Content Components
 
