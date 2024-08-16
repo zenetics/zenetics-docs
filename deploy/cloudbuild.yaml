@@ -12,16 +12,16 @@ steps:
     args: ['push', '${_CLOUD_RUN_IMAGE}']
     # Deploy container image to Cloud Run
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
-    args:
-    - 'run'
-    - 'deploy'
-    - '${_CLOUD_RUN_SERVICE}'
-    - '--image'
-    - '${_CLOUD_RUN_IMAGE}'
-    - '--region'
-    - '${_CLOUD_RUN_REGION}'
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   entrypoint: gcloud
+  #   args:
+  #   - 'run'
+  #   - 'deploy'
+  #   - '${_CLOUD_RUN_SERVICE}'
+  #   - '--image'
+  #   - '${_CLOUD_RUN_IMAGE}'
+  #   - '--region'
+  #   - '${_CLOUD_RUN_REGION}'
 
 images:
   - '${_CLOUD_RUN_IMAGE}'
