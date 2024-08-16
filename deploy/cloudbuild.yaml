@@ -28,10 +28,11 @@ images:
 
 substitutions:
   _PROJECT: build-zenetics
+  _REPO_REGION: 'europe-west1'
   _CLOUD_RUN_SERVICE: 'zenetics-docs'
   _CLOUD_RUN_REGION: 'europe-west1'
   _IMAGE_TAG: 'latest'
-  _CLOUD_RUN_IMAGE: 'europe-west3-docker.pkg.dev/${_PROJECT}/docker-registry/${_CLOUD_RUN_SERVICE}:${_IMAGE_TAG}'
+  _CLOUD_RUN_IMAGE: ${_REPO_REGION}'-docker.pkg.dev/${_PROJECT}/docker-registry/${_CLOUD_RUN_SERVICE}:${_IMAGE_TAG}'
 
 logsBucket: 'build-zenetics-cloudbuild-logs'
 options:
