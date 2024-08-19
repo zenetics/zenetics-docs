@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { DocsThemeConfig } from 'nextra-theme-docs';
+import { DocsThemeConfig, useConfig } from 'nextra-theme-docs';
 import AppLoginButton from './components/AppLoginButton';
+import { useRouter } from 'next/router';
 
 const config: DocsThemeConfig = {
     logo: (
@@ -42,6 +43,35 @@ const config: DocsThemeConfig = {
                 <AppLoginButton />
             </>
         ),
+    },
+    head: () => {
+        const { frontMatter } = useConfig();
+        const url = 'https://docs.zenetics.io';
+
+        return (
+            <>
+                <meta property='og:url' content={url} />
+                <meta
+                    property='og:title'
+                    content={frontMatter.title || 'Zenetics Docs'}
+                />
+                <meta
+                    property='og:description'
+                    content={
+                        frontMatter.description ||
+                        'Zenetics - the application development platform for the age of AI'
+                    }
+                />
+            </>
+        );
+    },
+    useNextSeoProps() {
+        const { asPath } = useRouter();
+        if (asPath !== '/') {
+            return {
+                titleTemplate: '%s | Zenetics Docs',
+            };
+        }
     },
 };
 
