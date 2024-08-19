@@ -28,7 +28,6 @@ images:
 
 substitutions:
   _PROJECT: build-zenetics
-  _REPO_REGION: europe-west3
   _CLOUD_RUN_SERVICE: 'zenetics-docs'
   _CLOUD_RUN_REGION: 'europe-west1'
   _IMAGE_TAG: 'latest'

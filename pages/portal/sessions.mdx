@@ -3,14 +3,14 @@ import { Callout } from 'nextra/components'
 
 # Sessions
 
-Zenetics' mission is to build a platform where teams of technicial and domain experts can collaborate to evaluate, analyze and improve complex LLM applications. Therefore, we place a strong focus on the user experince of Zenetics to make sure that persons with differnet roles can find the required information easily to make informed decisions to improve the reliability of the LLM applications.
+Zenetics' mission is to build a platform where teams of technical and domain experts can collaborate to evaluate, analyze and improve complex LLM applications. Therefore, we place a strong focus on the user experience of Zenetics to make sure that persons with different roles can find the required information easily to make informed decisions to improve the reliability of the LLM applications.
 
 This page outlines the main features you find on the Sessions page in the Zenetics Portal.
 
 
 ## Sessions Overview
 
-The Session page list the most recent sessions that have been captured for your applications. The list provide flexible filter option and shows relevent information like session state and session labels to help you locate the sessions you are interested in.
+The Session page list the most recent sessions that have been captured for your applications. The list provide flexible filter option and shows relevant information like session state and session labels to help you locate the sessions you are interested in.
 
 <Image className="my-8" src="/images/screens/10_zenetics_portal_sessions.png" alt="Zenetics Portal Session" width="1200" height="400" />
 
@@ -32,13 +32,13 @@ The session details page provides you with a detailed view of the session data a
 
 ### Session context
 
-The session context provides you with all the information required to evaluate and analyse a session. A session can have multiple `Completions` which are the results of the LLM model. The session context also aggregates the token counts for prompt, completion and the total token count. 
+The session context provides you with all the information required to evaluate and analyze a session. A session can have multiple `Completions` which are the results of the LLM model. The session context also aggregates the token counts for prompt, completion and the total token count. 
 
 For each completion, the required context is presented:
 * **Generated Result**: The generated output of the LLM model. The rendering support multiple formats like Text, JSON, and  HTML to render the output in a way that it can be analyzed easily. This requires a configuration of the SDK to capture the content type.
 * **Model Infos**: An aggregation of the model information like the model name, model type, and the model version that was used to generate the completion. This also includes performance metrics like the response time of the model.
 * **Prompts**: The prompt contains the list of messages provided to the LLM model, with all the context.
-* **InputContext**: The input context is optional and can contain additional information about the input data. This can e.g. be the individual fragment for a Retrievel Augmented Generation (RAG) architecture. While this data is also part of the prompt, the input context provides you with a structured view of the input data that was used to generate the completion and additional metadata like retrieval scores, etcs.
+* **InputContext**: The input context is optional and can contain additional information about the input data. This can e.g. be the individual fragment for a Retrieval Augmented Generation (RAG) architecture. While this data is also part of the prompt, the input context provides you with a structured view of the input data that was used to generate the completion and additional metadata like retrieval scores, etc.
 
 
 <Callout type="info" emoji="ℹ️">
@@ -77,7 +77,7 @@ Evaluations are a very powerful mechanism for getting high-quality feedback to i
 
 #### Flagging Sessions
 
-When noticing someing that is not correct or that needs to be reviewed by the team, you can flag the session to highlight it for the rest of the team. This is important when you want to make sure that the session is reviewed by the team. You can filter sessions on the session list by the flag to make sure that you can easily locate the sessions that need to be reviewed.
+When noticing something that is not correct or that needs to be reviewed by the team, you can flag the session to highlight it for the rest of the team. This is important when you want to make sure that the session is reviewed by the team. You can filter sessions on the session list by the flag to make sure that you can easily locate the sessions that need to be reviewed.
 
 <Image className="my-8" src="/images/screens/13_zenetics_portal_session_details_flag_session.png" alt="Zenetics Portal" width="400" height="400" />
 

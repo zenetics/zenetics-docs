@@ -3,23 +3,23 @@ import { Callout } from 'nextra/components'
 
 # Zenetics SDK Concepts
 
-The Zenetics SDK enables you to capture the input and output of LLM applications for various LLM providers, and sends the data to the Zenetics platform where you can easily evaluate and analyse the generated results.
+The Zenetics SDK enables you to capture the input and output of LLM applications for various LLM providers, and sends the data to the Zenetics platform where you can easily evaluate and analyze the generated results.
 
 THe SDK is available for the following languages:
-* [Zenetics SDK for Python](/sdk/python)
+* [Zenetics SDK for Python](/sdk/sdk-python)
 * Zenetics SDK for Typescript (coming soon) 
 
 ## Capturing Input and Output of LLM Models
 
-The SDK is designed for easy integration with existing applications and major LLM providers and frameworks. The SDK provides methods that minimc the original LLM provider's API, and acts like a wrapper around the original LLM provider's API. Your request to the LLM model are not passed through the Zenetics platform, but are directly sent to the LLM provider. This ensures that the performance and availability of your applications are not impacted by the Zenetics platform.
+The SDK is designed for easy integration with existing applications and major LLM providers and frameworks. The SDK provides methods that mimic the original LLM provider's API, and acts like a wrapper around the original LLM provider's API. Your request to the LLM model are not passed through the Zenetics platform, but are directly sent to the LLM provider. This ensures that the performance and availability of your applications are not impacted by the Zenetics platform.
 
 ##  Capturing Extended Input Context
 
 The Zenetics SDK also allows you to capture the extended input context of the LLM model. The extended input context includes additional metadata about your application, and provides to add additional information to data passed in the prompt. 
 
-One use case for the extended input context is to provide the fragments for a **Retrieval Augmented Generation (RAG) application**. The fragment data in the extended input context can include additional information related to the source of the fragments and retreival scores. 
+One use case for the extended input context is to provide the fragments for a **Retrieval Augmented Generation (RAG) application**. The fragment data in the extended input context can include additional information related to the source of the fragments and retrieval scores. 
 
-Another use case are **Agentic Architectures** (also known as Cognitive Architectures) that include a seriers of multiple calls to the LLM models to implement complex workflows. Providing the individual completions of a session with additional context can dramatically easy the task of understanding complex workflows in the Zenetics platform.
+Another use case are **Agentic Architectures** (also known as Cognitive Architectures) that include a series of multiple calls to the LLM models to implement complex workflows. Providing the individual completions of a session with additional context can dramatically easy the task of understanding complex workflows in the Zenetics platform.
 
 
 <Callout type="info" emoji="ℹ️">

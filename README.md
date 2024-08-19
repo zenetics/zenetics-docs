@@ -54,3 +54,8 @@ Use the `<Image>`compnent instead of the standard image-tag to provide a better 
 Nextra is based on NextJS and therefore supports frontend components based on React to define specific types of content (e.g. Code Blocks, Tables, etc.). There is a list of predefined components that come with Nextra: [Build-in components](https://nextra.site/docs/guide/built-ins)
 
 In addition, Nextra allows custom components to be defined. These will be locaed in the **components**-folder in this repository.
+
+### Spellchecking 
+
+Always check the spelling of your generated text before pushing the changes to the origin. Please set up your editor to support spell checking:
+* [VS Code: Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
