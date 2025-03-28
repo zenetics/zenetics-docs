@@ -1,7 +1,7 @@
 {
     "name": "zenetics-docs",
     "version": "0.0.1",
-    "description": "Zenetics documentation site",
+    "description": "ZENETICS documentation site",
     "scripts": {
         "dev": "next dev",
         "build": "next build",

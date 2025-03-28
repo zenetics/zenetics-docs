@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 export default function AppLoginButton() {
     return (
         <Button asChild>
-            <Link href='https://app.zenetics.io'>Log In to Zenetics</Link>
+            <Link href='https://app.zenetics.io'>Launch ZENETICS</Link>
         </Button>
     );
 }

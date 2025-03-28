@@ -1,12 +1,8 @@
 # ZENETICS Docs
 
-This project contains the pubic documentation of Zenetics: [docs.zenetics.io](https://docs.zenetics.io)
+This project contains the pubic documentation of ZENETICS: [docs.zenetics.io](https://docs.zenetics.io)
 
-This project is based on [Nextra](https://nextra.site), a documentation framework based on NextJS. The [Nextra Docs](https://nextra.site/docs) provide additional information on how to add new pages and add content for pages. 
-
-The project is a fork of [Nextra-Docs-Templates](https://github.com/shuding/nextra-docs-template).
-
-
+This project is based on [Nextra](https://nextra.site), a documentation framework based on NextJS. The [Nextra Docs](https://nextra.site/docs) provide additional information on how to add new pages and add content for pages.
 
 ## Local Development
 
@@ -18,22 +14,20 @@ The project requires the package manager [pnpm](https://pnpm.io/) to be installe
 
 ### Run locally
 
-First, run `pnpm i` to install the dependencies. 
+First, run `make setup` to install the dependencies.
 
 Run `make run` to to start the development server and visit localhost:3000.
 Run `make build` to create a local build and check for build errors.
 
-
 ## Deployment
 
-The application is intended to be run as a docker container on Google Cloud Run: zenetics-docs. The application is build via CloudBuild Tiggers when an update is push to the `main`-branch.
+The application is deployed on [VERCEL](https://vercel.com/) the ZENETICS account. The current deployment automatically deploys merges to the **main**-branch to the production env: [docs.zenetics.io](https://docs.zenetics.io/)
 
-The CloudRun service `zenetics-docs` is set up in Terraform as a separate module.
+The DNS entry for docs.zenetics.io is managed in AWS Route53. Please reach out to Michael if changes are required.
 
 ## Managing Content
 
 The [Nextra documentation](https://nextra.site/docs/docs-theme/page-configuration) provides a short overview on how to add new pages and manage the navigation menues.
-
 
 ### Adding New Pages
 
@@ -43,7 +37,7 @@ For more information, see the Netra Documention: [Organizing Files](https://next
 
 ### Adding Images
 
-Images can be added in the `/public` folder. 
+Images can be added in the `/public` folder.
 
 Nextra support the NextJS Image component that automatically optimizes the images served to the client: [NEXT - Image Optimization](https://nextjs.org/docs/pages/building-your-application/optimizing/images).
 
@@ -55,7 +49,8 @@ Nextra is based on NextJS and therefore supports frontend components based on Re
 
 In addition, Nextra allows custom components to be defined. These will be locaed in the **components**-folder in this repository.
 
-### Spellchecking 
+### Spellchecking
 
 Always check the spelling of your generated text before pushing the changes to the origin. Please set up your editor to support spell checking:
-* [VS Code: Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
+
+-   [VS Code: Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)

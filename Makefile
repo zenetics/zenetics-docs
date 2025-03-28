@@ -1,10 +1,13 @@
 SERVICE_NAME=zenetics-docs
 
 # Run server
-.PHONY: run build build-local
+.PHONY: setup run build build-local
+
+setup:
+	pnpm install
 
 run:
-	pnpm run dev 
+	PORT=3002 pnpm run dev 
 
 build:
 	pnpm run build 

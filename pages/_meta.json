@@ -1,17 +1,10 @@
 {
-    "index": "Welcome to Zenetics",
-    "portal": "Zentics Portal",
-    "sdk": "Zenetics SDK",
+    "index": "Welcome to ZENETICS",
     "quickstart": "Quickstart",
-    "about": "About Zenetics",
-    "gethelp": {
-        "title": "Get Help ↗",
-        "type": "page",
-        "href": "https://zenetics.io",
-        "newWindow": true
-    },
-    "signin": {
-        "title": "Sign In ↗",
+    "test-management": "Test Management Portal",
+    "sdk": "ZENETICS SDK",
+    "zenetic-website": {
+        "title": "www.zenetics.io ↗",
         "type": "page",
         "href": "https://zenetics.io",
         "newWindow": true
