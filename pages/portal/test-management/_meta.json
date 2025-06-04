@@ -1,6 +1,7 @@
 {
     "page": {
         "title": "Overview",
+        "display": "hidden",
         "asIndexPage": true
     },
     "quickstart": {
