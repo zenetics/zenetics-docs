@@ -1,0 +1,445 @@
+import Image from 'next/image';
+
+# ZENETICS API - Guard
+
+## About Guards
+
+The ZENETICS Guard API enables real-time evaluation and monitoring of AI-generated content in production environments. Unlike testing scenarios where you can prepare and validate responses beforehand, Guards provide immediate quality assessment of live AI outputs, helping you maintain consistent quality and catch potential issues before they reach end users.
+
+Guards support many of the same evaluators available for testing, including content quality checks, bias detection, toxicity screening, and custom business logic validation. However, reference testing is not available for Guards since individual results are evaluated in real-time on production data without predetermined expected outcomes.
+
+### Guard Groups
+
+Customers can organize their quality checks into **Guard Groups** - collections of related guards that evaluate different aspects of generated content from specific perspectives. For example, you might have:
+
+-   A "Content Safety" guard group containing toxicity, bias, and appropriateness checks
+-   A "Business Logic" guard group with domain-specific validation rules
+-   A "Quality Assurance" guard group focusing on coherence, relevance, and accuracy
+
+Each guard group is assigned a unique ID and can be configured through the ZENETICS Portal to include the specific evaluators most relevant to your use case.
+
+<div>&nbsp;</div>
+<Image
+    className='my-16 mx-auto'
+    src='/images/overview/guard_integration.png'
+    alt='ZENETICS Guard Integration'
+    width='600'
+    height='400'
+/>
+
+### How Guards Work
+
+When your application generates content using AI models, you can immediately send that content along with its context to the ZENETICS Guard API. The API evaluates the content using your configured guard group and returns detailed results about potential issues or quality metrics.
+
+Since guard evaluations can involve multiple checks and may take anywhere from seconds to minutes depending on complexity, the API operates asynchronously. Results are delivered to your application via webhook callbacks, allowing your system to continue processing while guards run in the background.
+
+## Guard API
+
+The Guard API allows you to submit generated content for real-time quality evaluation and monitoring in production environments.
+
+### Endpoint
+
+```
+POST https://api.zenetics.io/guard/v1/check
+```
+
+### Authentication
+
+Authentication is required using an API key provided in the request header.
+
+| Header           | Type   | Required | Description                              |
+| ---------------- | ------ | -------- | ---------------------------------------- |
+| `Authorization`  | string | Yes      | Your ZENETICS API key with Bearer prefix |
+| `X-ZENETICS-API` | string | No       | Your ZENETICS API key (deprecated)       |
+
+**Note:** The authentication via the header `X-ZENETICS-API` is deprecated. Please use the standard `Authorization` header with the `Bearer` prefix for your integration.
+
+### Request Body
+
+The request body should be a JSON object with the following structure:
+
+#### Parameters
+
+| Field                                 | Type    | Required | Description                                                     |
+| ------------------------------------- | ------- | -------- | --------------------------------------------------------------- |
+| `generationContext`                   | object  | Yes      | Context and metadata about the generated content                |
+| `generationContext.input`             | string  | Yes      | The original input prompt or query                              |
+| `generationContext.output`            | string  | Yes      | The AI-generated response to be evaluated                       |
+| `generationContext.retrievalContext`  | array   | No       | Retrieved documents or context used by RAG systems              |
+| `generationContext.promptTemplate`    | string  | No       | The prompt template used for generation                         |
+| `generationContext.metadata`          | object  | No       | Additional metadata about the generation process                |
+| `generationContext.metadata.provider` | string  | No       | The AI provider (e.g., "openai", "anthropic", "azure")          |
+| `generationContext.metadata.model`    | string  | No       | The specific model name (e.g., "chatgpt-4o", "claude-3-sonnet") |
+| `guardGroupId`                        | integer | Yes      | ID of the guard group to use for evaluation                     |
+| `callbackConfig`                      | object  | Yes      | Configuration for receiving asynchronous results                |
+| `callbackConfig.ref_id`               | string  | No       | Your reference ID for tracking this request                     |
+| `callbackConfig.webhookUrl`           | string  | Yes      | URL where guard results will be sent                            |
+| `callbackConfig.webhookHeaders`       | object  | No       | Headers to include in the webhook request                       |
+| `options`                             | object  | No       | Additional options for guard processing                         |
+| `options.notification`                | boolean | No       | Whether to send notifications for failed guards                 |
+
+### Response
+
+#### Success Response
+
+The API returns immediately with a confirmation that the guard check has been queued for processing.
+
+**Status Code:** `202 Accepted`
+
+```json
+{
+    "guard_result_id": 12345,
+    "status": "queued",
+    "message": "Guard evaluation queued successfully",
+    "estimated_completion": "2025-06-02T10:35:00Z"
+}
+```
+
+#### Error Responses
+
+**Status Code:** `400 Bad Request`
+
+```json
+{
+    "error": "validation_error",
+    "message": "Invalid guard group ID",
+    "details": {
+        "field": "guardGroupId",
+        "code": "invalid"
+    }
+}
+```
+
+**Status Code:** `401 Unauthorized`
+
+```json
+{
+    "error": "authentication_error",
+    "message": "Invalid or missing API key"
+}
+```
+
+**Status Code:** `404 Not Found`
+
+```json
+{
+    "error": "resource_not_found",
+    "message": "Guard group not found"
+}
+```
+
+### Webhook Callback
+
+Since guard evaluations are asynchronous, results are delivered to your specified webhook URL via POST request.
+
+#### Callback Request Schema
+
+Your webhook endpoint will receive a POST request with the following JSON structure:
+
+```json
+{
+    "refId": "ref-1234",
+    "guardResult_id": 12345,
+    "guardStatus": "passed",
+    "guardResults": [
+        {
+            "id": 67890,
+            "accountId": 123,
+            "applicationId": 456,
+            "guard_groupId": 4,
+            "guardGroupSeqId": 1,
+            "name": "Toxicity Check",
+            "status": "passed"
+        },
+        {
+            "id": 67891,
+            "accountId": 123,
+            "applicationId": 456,
+            "guardGroupId": 4,
+            "guardGroupSeqId": 2,
+            "name": "Bias Detection",
+            "status": "failed"
+        }
+    ]
+}
+```
+
+#### Callback Parameters
+
+| Field           | Type          | Description                                      |
+| --------------- | ------------- | ------------------------------------------------ |
+| `refId`         | string        | Your reference ID from the original request      |
+| `guardResultId` | integer       | Unique ID for this guard evaluation              |
+| `guardStatus`   | string        | Overall status: "passed", "failed", or "skipped" |
+| `guardResults`  | array[object] | Individual results for each guard in the group   |
+
+#### Guard Result Object
+
+| Field             | Type    | Description                                     |
+| ----------------- | ------- | ----------------------------------------------- |
+| `id`              | integer | Unique ID for this individual guard result      |
+| `accountId`       | integer | Your ZENETICS account ID                        |
+| `applicationId`   | integer | ID of the application being evaluated           |
+| `guard_groupId`   | integer | ID of the guard group used                      |
+| `guardGroupSeqId` | integer | Sequence number of this guard within the group  |
+| `name`            | string  | Human-readable name of the guard                |
+| `status`          | string  | Result status: "passed", "failed", or "skipped" |
+
+#### Webhook Requirements
+
+Your webhook endpoint must:
+
+1. **Accept POST requests** with JSON content
+2. **Respond with HTTP 200-299** status codes to acknowledge receipt
+3. **Handle retries** - ZENETICS will retry failed webhook deliveries
+4. **Validate the payload** to ensure it matches the expected schema
+5. **Process results asynchronously** if needed to avoid timeouts
+
+### Example Requests
+
+##### cURL
+
+```bash
+curl -X POST https://api.zenetics.io/guard/v1/check \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-api-key-here" \
+  -d '{
+    "generationContext": {
+      "input": "What are the benefits of our premium subscription plan?",
+      "output": "Our premium subscription offers unlimited access to all features, priority customer support, advanced analytics, and exclusive content. You'\''ll also get early access to new features and a dedicated account manager.",
+      "retrievalContext": [
+        "Premium Plan Features: Unlimited access, priority support, advanced analytics",
+        "Customer Benefits: Early feature access, dedicated account manager, exclusive content"
+      ],
+      "promptTemplate": "You are a helpful sales assistant. Answer the customer'\''s question about our subscription plans: {input}",
+      "metadata": {
+        "provider": "openai",
+        "model": "chatgpt-4o"
+      }
+    },
+    "guardGroupId": 4,
+    "callbackConfig": {
+      "refId": "sales-query-001",
+      "webhookUrl": "https://api.yourcompany.com/zenetics/guards/callback",
+      "webhookHeaders": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      }
+    },
+    "options": {
+      "notification": true
+    }
+  }'
+```
+
+##### JavaScript (fetch)
+
+```javascript
+const response = await fetch('https://api.zenetics.io/guard/v1/check', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer your-api-key-here',
+    },
+    body: JSON.stringify({
+        generationContext: {
+            input: 'What are the benefits of our premium subscription plan?',
+            output: "Our premium subscription offers unlimited access to all features, priority customer support, advanced analytics, and exclusive content. You'll also get early access to new features and a dedicated account manager.",
+            retrievalContext: [
+                'Premium Plan Features: Unlimited access, priority support, advanced analytics',
+                'Customer Benefits: Early feature access, dedicated account manager, exclusive content',
+            ],
+            promptTemplate:
+                "You are a helpful sales assistant. Answer the customer's question about our subscription plans: {input}",
+            metadata: {
+                provider: 'openai',
+                model: 'chatgpt-4o',
+            },
+        },
+        guardGroupId: 4,
+        callbackConfig: {
+            ref_id: 'sales-query-001',
+            webhookUrl: 'https://api.yourcompany.com/zenetics/guards/callback',
+            webhookHeaders: {
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            },
+        },
+        options: {
+            notification: true,
+        },
+    }),
+});
+
+const result = await response.json();
+console.log('Guard check queued:', result.jobId);
+```
+
+##### Python (requests)
+
+```python
+import requests
+import json
+
+url = "https://api.zenetics.io/guard/v1/check"
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer your-api-key-here"
+}
+
+data = {
+    "generationContext": {
+        "input": "What are the benefits of our premium subscription plan?",
+        "output": "Our premium subscription offers unlimited access to all features, priority customer support, advanced analytics, and exclusive content. You'll also get early access to new features and a dedicated account manager.",
+        "retrievalContext": [
+            "Premium Plan Features: Unlimited access, priority support, advanced analytics",
+            "Customer Benefits: Early feature access, dedicated account manager, exclusive content"
+        ],
+        "promptTemplate": "You are a helpful sales assistant. Answer the customer's question about our subscription plans: {input}",
+        "metadata": {
+            "provider": "openai",
+            "model": "chatgpt-4o"
+        }
+    },
+    "guardGroupId": 4,
+    "callbackConfig": {
+        "refId": "sales-query-001",
+        "webhookUrl": "https://api.yourcompany.com/zenetics/guards/callback",
+        "webhookHeaders": {
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+    },
+    "options": {
+        "notification": True
+    }
+}
+
+response = requests.post(url, headers=headers, json=data)
+result = response.json()
+print(f"Guard check queued: {result['jobId']}")
+```
+
+#### Example Webhook Handler (Python FastAPI)
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+from enum import Enum
+
+app = FastAPI()
+
+class EvaluationResultState(str, Enum):
+    PASSED = "passed"
+    FAILED = "failed"
+    SKIPPED = "skipped"
+
+class GuardResult(BaseModel):
+    id: int
+    accountId: int
+    applicationId: int
+    guardGroupId: int
+    guardGroupSeqId: int
+    name: str
+    status: EvaluationResultState
+
+class CallbackRequest(BaseModel):
+    jobId: str
+    refId: Optional[str] = None
+    guardResultId: int
+    guardStatus: EvaluationResultState
+    guardResults: List[GuardResult]
+
+@app.post("/zenetics/guards/callback")
+async def handle_guard_callback(callback: CallbackRequest):
+    """Handle guard evaluation results from ZENETICS"""
+
+    print(f"Received guard results for ref_id: {callback.ref_id}")
+    print(f"Overall status: {callback.guard_status}")
+
+    # Process individual guard results
+    for guard_result in callback.guard_results:
+        if guard_result.status == EvaluationResultState.FAILED:
+            print(f"⚠️  Guard '{guard_result.name}' failed!")
+            # Handle failed guard (e.g., log, alert, take corrective action)
+            await handle_failed_guard(guard_result)
+        else:
+            print(f"✅ Guard '{guard_result.name}' passed")
+
+    # Acknowledge receipt
+    return {"status": "received", "guardResultId": callback.guardResultId}
+
+async def handle_failed_guard(guard_result: GuardResult):
+    """Handle a failed guard evaluation"""
+    # Implement your business logic for handling failed guards
+    # Examples: logging, alerting, blocking content, triggering reviews
+    pass
+```
+
+## Best Practices
+
+1. **Implement robust webhook handling**: Ensure your webhook endpoint can handle retries and processes results asynchronously if needed
+
+2. **Use meaningful reference IDs**: Include reference IDs that help you correlate guard results with your internal request tracking
+
+3. **Handle partial failures gracefully**: Individual guards within a group may fail while others pass - design your logic accordingly
+
+4. **Monitor guard performance**: Track guard evaluation times and success rates to optimize your guard group configurations
+
+5. **Secure your webhooks**: Use strong authentication headers and validate incoming webhook payloads
+
+6. **Plan for latency**: Guard evaluations can take time - design your application flow to handle asynchronous results appropriately
+
+7. **Configure appropriate guard groups**: Group related evaluators together and create separate groups for different quality perspectives
+
+## Error Handling
+
+When handling webhook callbacks, implement proper error handling:
+
+```python
+@app.post("/zenetics/guards/callback")
+async def handleGuardCallback(callback: CallbackRequest):
+    try:
+        # Process the callback
+        await processGuardResults(callback)
+        return {"status": "success"}
+    except Exception as e:
+        # Log the error but still return 200 to prevent retries
+        logger.error(f"Error processing guard callback: {e}")
+        return {"status": "error", "message": str(e)}
+```
+
+## Integration Patterns
+
+#### Real-time Content Filtering
+
+```python
+async def generate_and_guard_content(user_input: str):
+    # Generate content with your AI model
+    ai_response = await generate_ai_response(user_input)
+
+    # Submit for guard evaluation
+    guard_response = await submit_to_guards(user_input, ai_response)
+
+    # Return content immediately, handle guards asynchronously
+    return {
+        "content": ai_response,
+        "guardCheckId": guard_response["jobId"]
+    }
+```
+
+#### Batch Processing with Guards
+
+```python
+async def process_content_batch(content_items: List[dict]):
+    guard_checks = []
+
+    for item in content_items:
+        guard_response = await submit_to_guards(
+            item["input"],
+            item["output"]
+        )
+        guard_checks.append(guard_response["jobId"])
+
+    return guard_checks
+```
+
+For questions about Guard API integration or to configure guard groups for your use case, please contact our customer success team.

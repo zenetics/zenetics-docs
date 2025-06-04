@@ -19,6 +19,12 @@
             "@/*": ["./*"]
         }
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mdx"],
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mdx",
+        "pages/portal/settings/settings_application.msx"
+    ],
     "exclude": ["node_modules"]
 }

@@ -4,201 +4,299 @@ import { Callout } from 'nextra/components';
 
 # ZENETICS SDK Quickstart Guide
 
-ZENETICS SDK is a Python library that provides a simple interface to interact with ZENETICS API. It provides a command line interface CLI to run Test Suites on your local development machine or in your CI/CD system.
+Get your LLM application tested with ZENETICS in just a few minutes. This guide walks you through the essential steps to install the SDK, configure your environment, and run your first test suite.
 
-To get started, this short document guides you through the nessessary steps to set up your environment and run your first test suite.
+**What you'll accomplish:**
 
-1. Install the ZENETICS SDK
-2. Setting The ZENETICS_API_KEY and checking the connection
-3. Providing the Generation function to connect to your application
-4. Running your first test suite
-5. Inspecting the results in ZENETICS
+-   Install and configure the ZENETICS SDK
+-   Connect your application through a simple generate function
+-   Run your first quality test suite
+-   View detailed results in the ZENETICS Portal
 
-Let's get started.
+**Time required:** ~10 minutes
+
+<Callout type='info' emoji='💡'>
+    **New to ZENETICS?** Check out the [SDK Overview](/sdk/overview) for
+    detailed explanations of features and capabilities.
+</Callout>
 
 <Steps>
 
 ### Install the ZENETICS SDK
 
-The ZENETICS SDK is provided as Python module an can be installed easily in your environment.
-
-```commandline
-> pip install zenetics
-> poetry add zenetics
-```
-
-### Setting the Environment with the ZENETICS_API_KEY
-
-To authorize against the ZENETICS API, you need to set the ENV-variable `ZENETICS_API_KEY` in your environment. Alternatively, you can update your .env file if your project supports it.
+Install the SDK using your preferred Python package manager:
 
 ```bash
-export ZENETICS_API_KEY=xxx-xxx-xxx      #replace with your API key
+# Using pip
+pip install zenetics
+
+# Using Poetry
+poetry add zenetics
+
+# Using pipenv
+pipenv install zenetics
 ```
 
-You can access your ZENETICS API Key in the [ZENETICS Portal](https://app.zenetics.io). API keys are application specific, and you need to select the application you want to test. Once you have selected the application, you will find your API Key under the menu item **Settings** in the left sidebar.
+<Callout type='info' emoji='ℹ️'>
+    **Requirements:** Python 3.8+ is required. The SDK is available on
+    [PyPI](https://pypi.org/project/zenetics/).
+</Callout>
 
-The section "API Key - Test Runners" lists all the available API-keys. You can create a new one with simply by clicking **Create API Key**.
+### Configure Your API Key
 
-![ZENETICS Portal Application Settings](/images/sdk/zenetics_portal_application_settings.png)
+Get your API key from the [ZENETICS Portal](https://app.zenetics.io) and configure it using your preferred method:
 
-### Validating the Setup
+**Option 1: .env File (Recommended)**
+Create a `.env` file in your project root:
 
-You can run the check command of the ZENETICS CLI to validate if your setup is working:
+```env
+ZENETICS_API_KEY=your-api-key-here
+```
+
+**Option 2: Environment Variable**
 
 ```bash
-> zenetics check
-
-or
-
-> poetry run zenetics check
+export ZENETICS_API_KEY=your-api-key-here
 ```
 
-The command will show a success message or list which parts of the setup are missing.
+#### Getting Your API Key
 
-### Implementing the Generation Function
+1. Log in to the [ZENETICS Portal](https://app.zenetics.io)
+2. Select your application
+3. Navigate to **Settings** → **API Key - Test Runners**
+4. Click **Create API Key**
 
-The ZENETICS Test Runner, the core component of the SDK, requires access to the results of your application, and optional metadata to run the evaluations for the selected test cases. ZENETICS offers an easy way to connect your application by creating a Python file that implements a single function: `def generate(input: string) -> Generation`. This function receives an input string and returns an instance of the `Generation` class with the output and additional information.
+<Image
+    className='my-8'
+    src='/images/sdk/zenetics_portal_application_settings.png'
+    alt='ZENETICS Portal - API Key Creation'
+    width='1200'
+    height='400'
+/>
 
-See the following code example of the basic structure for the generate-function and the required information to enable ZENETICS to run evaluations on the generated output:
+### Verify Your Setup
+
+Validate your installation and configuration:
+
+```bash
+# Check configuration
+zenetics config show
+
+# Test API connectivity
+zenetics check --verbose
+```
+
+You should see your configuration details and a successful connection message.
+
+<Callout type='warning' emoji='⚠️'>
+    **Troubleshooting:** If you see connection errors, verify your API key is
+    correct and check your internet connection.
+</Callout>
+
+### Create Your Generate Function
+
+Create a Python file that connects ZENETICS to your application. This function receives test inputs and returns your application's outputs.
+
+**Example: `tests/generate.py`**
 
 ```python
-
 from zenetics.models.generation import Generation, TokenUsage, ModelMetadata
 
-
-# This is the only function that you need to provide. It connects the
-# ZENETICS Test Runner with your applications and captures the relevant
-# information for the evaluation process.
 def generate(input: str) -> Generation:
+    """
+    Connect your LLM application to ZENETICS testing.
 
-    # Generate the output using your LLM application.
-    #
-    # output:            The result generated by your LLM application.
-    #                    (type: str)
-    #
-    # retrieval_context: The optional retrieval context for RAG applications. This
-    #                    information is required for Relevance evaluators like
-    #                    Answer Relevance, Context Relevance, and Groundedness.
-    #                   (type: List[str])
-    #
-    # Replace `YOUR_APPLICATION.generate` with the function that generates the output
-    #
+    Args:
+        input: Test case input from your test suite
+
+    Returns:
+        Generation object with results and metadata
+    """
+
+    # Replace this with your actual application call
     output, retrieval_context = YOUR_APPLICATION.generate(input)
 
-    # You can also provide additional information that helps you to better understand
-    # the performance and characteristics of your model. We recommend that you provide
-    # both TokenUsage and ModelMetadata information.
-    output, retrieval_context, token_usage, metadata = YOUR_APPLICATION.generate(input)
+    # Optional: Include performance metrics
+    token_usage = TokenUsage(
+        input_tokens=864,
+        completion_tokens=567,
+        total_tokens=1431
+    )
 
+    # Optional: Include model metadata
+    metadata = ModelMetadata(
+        provider="OpenAI",
+        model="gpt-3.5-turbo",
+        parameters={
+            "max_tokens": 1024,
+            "temperature": 0.7
+        }
+    )
 
-    # The Generation object contains the necessary information for the
-    # ZENETICS Test Runner to evaluate the specific test case and perform the
-    # evaluations assigned to to the test suite.
     return Generation(
-        output=output,
-        retrieval_context=retrieval_context,
-
-        # Optional: Token usage helps you track the tokens required for
-        # generating results.
-        token_usage=TokenUsage(    # replace this with the data returned from your app.
-            input_tokens=864,
-            completion_tokens=567,
-            total_tokens=1431
-        ),
-        # Optional: Metadata helps you relate test results to your specific
-        # model configurations.
-        metadata=ModelMetadata(    # replace this with the actual metadata from your app.
-            provider="OpenAI",
-            model= "gpt-3.5-turbo",
-            parameters={
-                "max_tokens": 1024,
-                "temperature": 0.7
-            },
-        )
+        output=output,                        # Required: Your app's response
+        retrieval_context=retrieval_context,  # For RAG applications
+        token_usage=token_usage,              # Performance tracking
+        metadata=metadata                     # Model configuration
     )
 ```
 
-You have different options to integrate your application via the generate-function:
+**Integration Options:**
 
--   Direct Call: Import your application into the file and call the function directly.
--   API Call: Request the output and information via an API call to your application.
+-   **Direct Import:** Import your application and call it directly
+-   **API Call:** Make HTTP requests to your application's API
+-   **Local Testing:** Use mock data for initial testing
 
-### Select Your Test Suite
+<Callout type='info' emoji='📖'>
+    **Need more details?** See the [Generate Function
+    Guide](/sdk/overview#the-generate-function) for comprehensive examples and
+    best practices.
+</Callout>
 
-Now you are ready to run your first test suite via the ZENETICS CLI. The CLI provides a simple interface to run test suites on your local machine or in your CI/CD system.
+### Find Your Test Suite ID
 
-You will need the ID of the Test suites you want to run. You can get the Id via the CLI or from the ZENETICS Portal.
-
-Run the following command in your CLI to list all test suites of your application:
+List available test suites for your application:
 
 ```bash
-> zenetics testsuites
-> poetry run zenetics testsuites
+zenetics testsuite list
 ```
 
 <Image
     className='my-8'
     src='/images/sdk/zenetics_cli_testsuites.png'
-    alt='Zenetics SDK CLI - Listing test suites'
+    alt='ZENETICS CLI - Listing Test Suites'
     width='1200'
     height='400'
 />
 
-Alternative, you can get the tet suite id from the list of test suites in your application. Go to the [ZENETICS Portal](https://app.zenetics.io) and select the application you want to test. In the left sidebar, you will find the menu item **Test Suites**. Click on it to see the list of available test suites.
+**Alternative:** Get the ID from the ZENETICS Portal:
 
-Hover over the Id column of the list to easily copy the Id of your selected test suite.
+1. Go to [ZENETICS Portal](https://app.zenetics.io)
+2. Select your application
+3. Navigate to **Test Suites**
+4. Hover over the ID column to copy the test suite ID
 
 <Image
     className='my-8'
     src='/images/portal/screen_portal_testsuite_id.png'
-    alt='Zenetics Portal - Test Suite Id'
+    alt='ZENETICS Portal - Test Suite ID'
     width='1200'
     height='400'
 />
 
-### Run Your Test Suite
+### Run Your First Test Suite
 
-Now you are ready to run your first test suite via the ZENETICS CLI. The CLI provides a simple interface to run test suites on your local machine or in your CI/CD system.
-
-You can run a selected test suite with the following example command.
+Execute your test suite using the new CLI syntax:
 
 ```bash
-> zenetics run 1234 src/test/generate.py
+# Basic usage
+zenetics run --test-suite-id 1234 --generator-file tests/generate.py
 
-or
+# Short form
+zenetics run -t 1234 -g tests/generate.py
 
-> poetry zenetics run 1234 src/test/generate.py
+# With verbose output
+zenetics run -t 1234 -g tests/generate.py --verbose
 ```
 
-The CLI support several parameters to customize the test run:
+**Available Options:**
 
--   --verbose: Prints also passed test cases in the result summary
--   --local-only: Only creates a local test run file but no test run in ZENETICS
+-   `--output-dir` (`-o`): Custom results directory
+-   `--verbose` (`-v`): Detailed test output
+-   `--local-only`: Run without uploading to ZENETICS
 
-The console will show a summary of the test run.
+**Example with options:**
+
+```bash
+zenetics run -t 1234 -g tests/generate.py --verbose --output-dir ./test-results
+```
+
+The CLI will show a progress summary and results:
 
 <Image
     className='my-8'
     src='/images/sdk/zenetics_cli_run_result.png'
-    alt='Zenetics CLI - Test run results'
+    alt='ZENETICS CLI - Test Run Results'
     width='1200'
     height='400'
 />
 
-### Review Test Run Result
+### Review Your Results
 
-Congratulations 🎉, you just ran your first test suite. Now, let's inspect the results in ZENETICS.
+🎉 **Congratulations!** You've successfully run your first ZENETICS test suite.
 
-You can use the ZENETICS Test Run URL shown at the end of the test results in the CLI or open your [ZENETICS Account](https://app.zenetics.io). Once you select the application, you will automatically see the list of Test Runs.
+**View detailed results:**
 
-Feel free to dive deeper into the results and explore the detailed evaluations of your test cases.
+1. **Click the ZENETICS URL** shown in the CLI output, or
+2. **Visit the Portal:** Go to [ZENETICS Portal](https://app.zenetics.io) → Your Application → Test Runs
 
-You successfully completed all the steps to get you started to test your applications with ZENETICS. Feel free to head back to the [ZENETICS Quickstart Guide](/quickstart#-you-are-all-set)
+**What to explore:**
+
+-   Individual test case evaluations
+-   Performance metrics and token usage
+-   Quality scores and trends
+-   Detailed evaluation breakdowns
+
+### Next Steps
+
+Now that you've run your first test, consider these next steps:
+
+**Immediate Actions:**
+
+-   Explore different test suites for your application
+-   Customize your generate function with actual application calls
+-   Set up additional test environments (dev, staging)
+
+**Advanced Integration:**
+
+-   [Integrate into CI/CD pipelines](/sdk/overview#cicd-integration)
+-   [Configure multiple environments](/sdk/overview#environment-support)
+-   [Optimize performance and costs](/sdk/overview#best-practices)
+
+**Learn More:**
+
+-   [SDK Overview](/sdk/overview) - Comprehensive feature guide
+-   [API Reference](/sdk/api) - Complete function documentation
+-   [Examples Repository](/sdk/examples) - Real-world implementations
 
 </Steps>
 
-<Callout type='info' emoji='ℹ️'>
-    If you run into any issues or have questions, please reach out to our
-    support team at: **support@zenetics.io**. The ZENETICS team is happy to help
-    you with any questions and get you started with your first project.
+<Callout type='success' emoji='✅'>
+    **You're all set!** You've successfully integrated ZENETICS testing into
+    your development workflow. Head back to the [main quickstart
+    guide](/quickstart#-you-are-all-set) to continue your ZENETICS journey.
 </Callout>
+
+<Callout type='info' emoji='💬'>
+    **Need help?** Contact our support team at
+    [support@zenetics.io](mailto:support@zenetics.io). The ZENETICS team is
+    ready to help you succeed with your quality testing goals.
+</Callout>
+
+## Quick Reference
+
+### Essential Commands
+
+```bash
+# Configuration
+zenetics config show                    # View current setup
+zenetics check --verbose               # Test connectivity
+
+# Test Management
+zenetics testsuite list                # List available test suites
+
+# Running Tests
+zenetics run -t <ID> -g <file>         # Basic test run
+zenetics run -t <ID> -g <file> -v      # Verbose output
+zenetics run -t <ID> -g <file> --local-only  # Local testing only
+```
+
+### Minimum Generate Function
+
+```python
+from zenetics.models.generation import Generation
+
+def generate(input: str) -> Generation:
+    output = YOUR_APPLICATION.generate(input)  # Replace with your app
+    return Generation(output=output)
+```

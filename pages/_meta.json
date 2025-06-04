@@ -1,8 +1,9 @@
 {
     "index": "Welcome to ZENETICS",
     "quickstart": "Quickstart",
-    "test-management": "Test Management Portal",
+    "portal": "ZENETICS Portal",
     "sdk": "ZENETICS SDK",
+    "apis": "ZENETICS API",
     "zenetic-website": {
         "title": "www.zenetics.io ↗",
         "type": "page",

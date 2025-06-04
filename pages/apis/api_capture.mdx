@@ -1,0 +1,281 @@
+import Image from 'next/image';
+
+# ZENETICS API - Test Capture
+
+## About Test Captures
+
+Generating a comprehensive test dataset is often one of the unexpected challenges for AI projects. These projects often tackle complex business challenges and coming up with test cases, often dozens or even hundreds of test cases, is more complex and requires substantial timing. In many cases, teams scale back on the amount of tests, thereby increasing the potential for defects to pass undetected to production.
+
+Helping customers with creating and managing substantial test datasets that provide meaningful coverage of the application and its major risks is one of key motivators for ZENETICS.
+
+This is why we have launched Test Captures, that lets teams capture candidates of test cases on their test and production systems while working with the applications. This is the basic motivation for ZENETICS Test Capture, a simple API that enables your team to create test cases from existing usage.
+
+<div>&nbsp;</div>
+<Image
+    className='my-16 mx-auto'
+    src='/images/screens-simplified/screen_simple_test_capture.png'
+    alt='ZENETICS Test Capture'
+    width='600'
+    height='400'
+/>
+
+### How Test Capture works
+
+Your application needs to provide your users an option to capture a test case in the UI. This requires that you implement a simple mechanism for users to select a generated output and provide additional data for the test case: title, description, optional comments.
+
+You can then call the ZENETICS Test Capture API to submit the test case data to ZENETICS. The API will then create a new test capture in your ZENETICS account, which you can then use to create test cases in your Test Suites via the ZENETICS Portal.
+
+<div>&nbsp;</div>
+<Image
+    className='my-16 mx-auto'
+    src='/images/overview/test_capture_integration.png'
+    alt='ZENETICS Test Capture Integration'
+    width='600'
+    height='400'
+/>
+
+At the moment, ZENETICS does not provide a UI component that can be integrated into your application. This requires you to implement a simple UI component that allows users to capture test cases. This can be a simple button or link that opens a modal dialog where users can enter the test case data. The following screenshot shows a simple example from a ZENETICS sample application:
+
+<div>&nbsp;</div>
+<Image
+    className='my-16 mx-auto'
+    src='/images/screens/demo-article-summary-test-capture.png'
+    alt='ZENETICS Test Capture Example'
+    width='600'
+    height='400'
+/>
+
+Alternatively, you can also integrate Test Capture into your monitoring or tracing system. ZENETICS is working on integrations with existing platforms like **Langsmith** or **Langfuse**. Please reach out to your customer success team to learn more about these integrations.
+
+### Integrating Test Captures into your application
+
+The Test Capture feature is provided as an endpoint of the ZENETICS API. New Test Captures are created by issuing an HTTP POST request with a JSON body that contains the basic information about the test capture.
+
+The following section describes the Test Capture API in more detail. You can always reach out to our customer success team to get help with integrating the API into your system.
+
+## Test Capture API
+
+The Test Capture API allows you to submit test data and model outputs to ZENETICS for quality analysis and monitoring of your GenAI applications.
+
+### Endpoint
+
+```
+POST https://api.zenetics.io/services/v1/captures
+```
+
+### Authentication
+
+Authentication is required using an API key provided in the request header.
+
+| Header           | Type   | Required | Description                              | Example Value |
+| ---------------- | ------ | -------- | ---------------------------------------- | ------------- |
+| `Authorization`  | string | Yes      | Your ZENETICS API key with Bearer prefix | Bearer 123456 |
+| `X-ZENETICS-API` | string | No       | Your ZENETICS API key (deprecated)       | 123456        |
+
+**Note:** The authentication via the header `X-ZENETICS-API` is deprecated. Please use the standard `Authorization` header with the `Bearer` prefix for your integration.
+
+### Request Body
+
+The request body should be a JSON object with the following structure:
+
+#### Parameters
+
+| Field                       | Type          | Required | Description                                                 |
+| --------------------------- | ------------- | -------- | ----------------------------------------------------------- |
+| `name`                      | string        | Yes      | A descriptive name for the test capture                     |
+| `description`               | string        | No       | Detailed description of the test case or scenario           |
+| `tags`                      | array[string] | No       | Tags for categorizing and filtering test captures           |
+| `data`                      | object        | Yes      | The actual test data containing input, output, and context  |
+| `data.input`                | string        | Yes      | The input prompt or query sent to the model                 |
+| `data.output`               | string        | Yes      | The response generated by the model                         |
+| `data.retrieval_context`    | array[string] | No       | Retrieved documents or context used by RAG systems          |
+| `model_metadata`            | object        | Yes      | Information about the model used to generate the output     |
+| `model_metadata.provider`   | string        | Yes      | The AI provider (e.g., "OpenAI", "Anthropic", "Azure")      |
+| `model_metadata.model`      | string        | Yes      | The specific model name (e.g., "gpt-4o", "claude-3-sonnet") |
+| `model_metadata.parameters` | object        | No       | Model parameters used for generation                        |
+| `comment`                   | string        | No       | Additional notes or comments about this test capture        |
+
+#### Model Parameters
+
+You can provide optional model metadata. This gives your team the necessary context when reviewing the test capture and understanding how the output was generated, since model parameters can vary for specific requests and will likely be optimized over the lifetime of the application.
+
+Common model parameters include:
+
+| Parameter           | Type    | Description                          |
+| ------------------- | ------- | ------------------------------------ |
+| `temperature`       | number  | Controls randomness (0.0 to 2.0)     |
+| `max_tokens`        | integer | Maximum number of tokens to generate |
+| `top_p`             | number  | Nucleus sampling parameter           |
+| `frequency_penalty` | number  | Penalizes frequent tokens            |
+| `presence_penalty`  | number  | Penalizes new tokens                 |
+
+### Response
+
+#### Success Response
+
+**Status Code:** `201 Created`
+
+```json
+{
+    "id": "tc_1234567890abcdef",
+    "status": "captured",
+    "created_at": "2025-06-02T10:30:00Z",
+    "message": "Test capture created successfully"
+}
+```
+
+#### Error Responses
+
+**Status Code:** `400 Bad Request`
+
+```json
+{
+    "error": "validation_error",
+    "message": "Missing required field: name",
+    "details": {
+        "field": "name",
+        "code": "required"
+    }
+}
+```
+
+**Status Code:** `401 Unauthorized`
+
+```json
+{
+    "error": "authentication_error",
+    "message": "Invalid or missing API key"
+}
+```
+
+**Status Code:** `429 Too Many Requests`
+
+```json
+{
+    "error": "rate_limit_exceeded",
+    "message": "Rate limit exceeded. Try again in 60 seconds."
+}
+```
+
+### Example Requests
+
+#### cURL
+
+```bash
+curl -X POST https://api.zenetics.io/services/v1/captures \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-api-key-here" \
+  -d '{
+    "name": "Customer Support Query - Product Return",
+    "description": "Testing chatbot response to customer return inquiry",
+    "tags": ["customer-support", "returns", "production"],
+    "data": {
+      "input": "I bought a laptop last week and it'\''s not working properly. The screen keeps flickering. Can I return it?",
+      "output": "I understand your frustration with the flickering screen on your laptop. Yes, you can definitely return it within our 30-day return policy. Since you purchased it last week, you'\''re well within the return window. Here'\''s what you need to do:\n\n1. Visit our returns page and fill out the return form\n2. Print the prepaid return label\n3. Package the laptop securely in its original box\n4. Drop it off at any authorized shipping location\n\nOnce we receive and inspect the laptop, we'\''ll process your full refund within 3-5 business days. Would you like me to email you the return instructions?",
+      "retrieval_context": [
+        "Return Policy: Customers can return items within 30 days of purchase for a full refund.",
+        "Defective Electronics: All electronic items with manufacturing defects are eligible for immediate return regardless of usage.",
+        "Return Process: Customers must fill out online return form and use prepaid shipping label provided."
+      ]
+    },
+    "model_metadata": {
+      "provider": "OpenAI",
+      "model": "gpt-4o",
+      "parameters": {
+        "temperature": 0.3,
+        "max_tokens": 250,
+        "top_p": 0.9
+      }
+    },
+    "comment": "Testing customer service bot with product defect scenario"
+  }'
+```
+
+#### JavaScript (fetch)
+
+```javascript
+const response = await fetch('https://api.zenetics.io/services/v1/captures', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer your-api-key-here',
+    },
+    body: JSON.stringify({
+        name: 'Customer Support Query - Product Return',
+        description: 'Testing chatbot response to customer return inquiry',
+        tags: ['customer-support', 'returns', 'production'],
+        data: {
+            input: "I bought a laptop last week and it's not working properly. The screen keeps flickering. Can I return it?",
+            output: "I understand your frustration with the flickering screen on your laptop. Yes, you can definitely return it within our 30-day return policy. Since you purchased it last week, you're well within the return window. Here's what you need to do:\n\n1. Visit our returns page and fill out the return form\n2. Print the prepaid return label\n3. Package the laptop securely in its original box\n4. Drop it off at any authorized shipping location\n\nOnce we receive and inspect the laptop, we'll process your full refund within 3-5 business days. Would you like me to email you the return instructions?",
+            retrieval_context: [
+                'Return Policy: Customers can return items within 30 days of purchase for a full refund.',
+                'Defective Electronics: All electronic items with manufacturing defects are eligible for immediate return regardless of usage.',
+                'Return Process: Customers must fill out online return form and use prepaid shipping label provided.',
+            ],
+        },
+        model_metadata: {
+            provider: 'OpenAI',
+            model: 'gpt-4o',
+            parameters: {
+                temperature: 0.3,
+                max_tokens: 250,
+                top_p: 0.9,
+            },
+        },
+        comment: 'Testing customer service bot with product defect scenario',
+    }),
+});
+
+const result = await response.json();
+console.log(result);
+```
+
+#### Python (requests)
+
+```python
+import requests
+import json
+
+url = "https://api.zenetics.io/services/v1/captures"
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer your-api-key-here"
+}
+
+data = {
+    "name": "Customer Support Query - Product Return",
+    "description": "Testing chatbot response to customer return inquiry",
+    "tags": ["customer-support", "returns", "production"],
+    "data": {
+        "input": "I bought a laptop last week and it's not working properly. The screen keeps flickering. Can I return it?",
+        "output": "I understand your frustration with the flickering screen on your laptop. Yes, you can definitely return it within our 30-day return policy. Since you purchased it last week, you're well within the return window. Here's what you need to do:\n\n1. Visit our returns page and fill out the return form\n2. Print the prepaid return label\n3. Package the laptop securely in its original box\n4. Drop it off at any authorized shipping location\n\nOnce we receive and inspect the laptop, we'll process your full refund within 3-5 business days. Would you like me to email you the return instructions?",
+        "retrieval_context": [
+            "Return Policy: Customers can return items within 30 days of purchase for a full refund.",
+            "Defective Electronics: All electronic items with manufacturing defects are eligible for immediate return regardless of usage.",
+            "Return Process: Customers must fill out online return form and use prepaid shipping label provided."
+        ]
+    },
+    "model_metadata": {
+        "provider": "OpenAI",
+        "model": "gpt-4o",
+        "parameters": {
+            "temperature": 0.3,
+            "max_tokens": 250,
+            "top_p": 0.9
+        }
+    },
+    "comment": "Testing customer service bot with product defect scenario"
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+## Best Practices
+
+1. **Use descriptive names**: Make test capture names clear and searchable to help your team identify relevant test cases
+2. **Tag consistently**: Use consistent tagging strategies for easy filtering and organization of test captures
+3. **Include context**: Provide retrieval context when testing RAG applications to understand how the model made decisions
+4. **Document parameters**: Include all relevant model parameters for reproducibility and debugging
+5. **Handle errors gracefully**: Implement proper error handling for API failures and network issues
+6. **Monitor rate limits**: Check rate limit headers and implement backoff strategies to avoid hitting limits

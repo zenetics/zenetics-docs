@@ -1,0 +1,11 @@
+{
+    "test-management": {
+        "title": "Test Management"
+    },
+    "guard-management": {
+        "title": "Guard Management"
+    },
+    "settings": {
+        "title": "Settings"
+    }
+}
